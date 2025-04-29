@@ -85,21 +85,20 @@ class Instabrute():
 			sess.proxies = { "http": self.CurrentProxy, "https": self.CurrentProxy }
 
 		#build requests headers
-		sess.cookies.update ({'sessionid' : '', 'mid' : '', 'ig_pr' : '1', 'ig_vw' : '1920', 'csrftoken' : '',  's_network' : '', 'ds_user_id' : ''})
-		sess.headers.update({
-			'UserAgent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36',
-			'x-instagram-ajax':'1',
-			'X-Requested-With': 'XMLHttpRequest',
-			'origin': 'https://www.instagram.com',
-			'ContentType' : 'application/x-www-form-urlencoded',
-			'Connection': 'keep-alive',
-			'Accept': '*/*',
-			'Referer': 'https://www.instagram.com',
-			'authority': 'www.instagram.com',
-			'Host' : 'www.instagram.com',
-			'Accept-Language' : 'en-US;q=0.6,en;q=0.4',
-			'Accept-Encoding' : 'gzip, deflate'
-		})
+	        cookies = r.cookies.get_dict()
+csrftoken = cookies.get('csrftoken')
+
+if csrftoken:
+    sess.headers.update({'X-CSRFToken': csrftoken})
+else:
+    print("Error: 'csrftoken' not found in cookies. Response might have failed.")
+    print("Response status:", r.status_code)
+    print("Response body:", r.text)
+    return None  # or handle this case as needed
+	headers = {
+    'User-Agent': 'Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.91 Mobile Safari/537.36'
+}
+r = requests.get("https://www.instagram.com/accounts/login/", headers=headers)
 
 		#Update token after enter to the site
 		r = sess.get('https://www.instagram.com/') 
